@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Otitodilichukwu Osakwe — Frontend Developer</title>
+<meta name="description" content="Computer Engineering student at the University of Lagos. Webmaster, IEEE UNILAG. Building toward frontend development and UI/UX.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFFAF3;
+    --text: #1C1917;
+    --muted: #78716C;
+    --accent: #F2542D;
+    --accent-soft: #FFE8E0;
+    --border: #EFE7DC;
+    --card: #FFFFFF;
+  }
+
+  /* Color themes cycled via JS by clicking the name */
+  [data-theme="coral"]  { --accent: #F2542D; --accent-soft: #FFE8E0; }
+  [data-theme="navy"]   { --accent: #1E40AF; --accent-soft: #DBEAFE; }
+  [data-theme="teal"]   { --accent: #0F766E; --accent-soft: #CCFBF1; }
+  [data-theme="purple"] { --accent: #7C3AED; --accent-soft: #EDE9FE; }
+  [data-theme="amber"]  { --accent: #D97706; --accent-soft: #FEF3C7; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    transition: background 0.4s ease;
+  }
+
+  /* Background blob that follows the mouse */
+  .blob {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+    filter: blur(60px);
+    transition: background 0.4s ease;
+    will-change: transform;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 80px 32px 120px;
+  }
+
+  /* Reveal-on-scroll animation */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Header */
+  .header { margin-bottom: 80px; }
+
+  .name {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(40px, 7vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    cursor: pointer;
+    user-select: none;
+    display: inline-block;
+    transition: color 0.4s ease;
+    position: relative;
+  }
+
+  .name:hover { color: var(--accent); }
+
+  .name::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: var(--accent);
+    transition: width 0.3s ease, background 0.4s ease;
+  }
+
+  .name:hover::after { width: 100%; }
+
+  .name-hint {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    margin-left: 12px;
+    vertical-align: middle;
+    background: var(--accent-soft);
+    padding: 6px 14px;
+    border-radius: 100px;
+    transition: all 0.4s ease;
+    animation: float 2.5s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  .tagline {
+    font-size: 20px;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.5;
+  }
+
+  .tagline strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* Sections */
+  .section { margin-bottom: 64px; }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--accent);
+    margin-bottom: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    transition: color 0.4s ease;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+    transition: background 0.4s ease;
+  }
+
+  .section-content p {
+    font-size: 18px;
+    margin-bottom: 16px;
+    line-height: 1.65;
+  }
+
+  .section-content p:last-child { margin-bottom: 0; }
+
+  /* Skills */
+  .skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .skill {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    transition: all 0.25s ease;
+    cursor: default;
+  }
+
+  .skill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  /* Projects */
+  .project {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: padding-left 0.3s ease;
+    position: relative;
+  }
+
+  .project::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 60%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.3s ease, background 0.4s ease;
+  }
+
+  .project:hover { padding-left: 16px; }
+  .project:hover::before { width: 3px; }
+  .project:last-child { border-bottom: none; }
+
+  .project-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 24px;
+    margin-bottom: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .project-title-arrow {
+    color: var(--accent);
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+
+  .project:hover .project-title-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .project-description {
+    color: var(--muted);
+    font-size: 16px;
+    margin-bottom: 10px;
+    max-width: 580px;
+  }
+
+  .project-tech {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: color 0.4s ease;
+  }
+
+  /* Contact */
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .contact-link {
+    font-size: 17px;
+    color: var(--text);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    width: fit-content;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+    transition: all 0.2s ease;
+  }
+
+  .contact-link:hover {
+    border-bottom-color: var(--accent);
+    color: var(--accent);
+    transform: translateX(4px);
+  }
+
+  .contact-link .label {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    min-width: 72px;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 96px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .footer-quote {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+  }
+
+  .footer-time {
+    font-variant-numeric: tabular-nums;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .footer-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+    transition: background 0.4s ease;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 56px 24px 80px; }
+    .header { margin-bottom: 56px; }
+    .section { margin-bottom: 48px; }
+    .name { margin-bottom: 18px; }
+    .tagline { font-size: 18px; }
+    .section-content p { font-size: 17px; }
+    .name-hint {
+      display: block;
+      margin-left: 0;
+      margin-top: 12px;
+      width: fit-content;
+    }
+    .blob { display: none; }
+  }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body data-theme="coral">
+
+<div class="blob" id="blob"></div>
+
+<main class="container">
+
+  <header class="header reveal">
+    <h1 class="name" id="nameHeading" title="Click to change the vibe">Otitodilichukwu Osakwe</h1>
+    <span class="name-hint" id="nameHint">click my name ✨</span>
+    <p class="tagline">
+      <strong>Computer Engineering student</strong> at the University of Lagos, building toward frontend development and UI/UX. Currently Webmaster at IEEE UNILAG.
+    </p>
+  </header>
+
+  <section class="section reveal">
+    <h2 class="section-label">About</h2>
+    <div class="section-content">
+      <p>I'm a 400-level Computer Engineering student with a growing focus on the web — specifically the part where code meets people. I care about interfaces that are clean, simple, and genuinely easy to use, and I'm learning the craft from the ground up.</p>
+      <p>Outside of coding, I write copy, lead small teams on student projects, and watch a lot of anime.</p>
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <h2 class="section-label">Skills</h2>
+    <div class="section-content">
+      <div class="skills">
+        <span class="skill">HTML</span>
+        <span class="skill">CSS</span>
+        <span class="skill">JavaScript</span>
+        <span class="skill">Git &amp; GitHub</span>
+        <span class="skill">Responsive Design</span>
+        <span class="skill">UI/UX Fundamentals</span>
+        <span class="skill">Python</span>
+        <span class="skill">C / C++</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <h2 class="section-label">Selected Work</h2>
+    <div class="section-content">
+
+      <a href="https://github.com/kxng0109/ieee-unilag-sb" class="project" target="_blank" rel="noopener">
+        <div class="project-title">
+          IEEE UNILAG Website
+          <span class="project-title-arrow">→</span>
+        </div>
+        <div class="project-description">Leading the development of the official IEEE UNILAG student branch website as Webmaster — defining structure, reviewing implementation, and coordinating the team.</div>
+        <div class="project-tech">React · Tailwind CSS · Node.js · Express</div>
+      </a>
+
+      <a href="https://tito-osakwe.github.io/frontend-practice-projects/" class="project" target="_blank" rel="noopener">
+        <div class="project-title">
+          Frontend Practice Projects
+          <span class="project-title-arrow">→</span>
+        </div>
+        <div class="project-description">A growing collection of HTML and CSS exercises building my fundamentals — typography, buttons, product cards, layouts.</div>
+        <div class="project-tech">HTML · CSS</div>
+      </a>
+
+    </div>
+  </section>
+
+  <section class="section reveal">
+    <h2 class="section-label">Get in touch</h2>
+    <div class="section-content">
+      <div class="contact-links">
+        <a href="mailto:titoosakwe05@gmail.com" class="contact-link">
+          <span class="label">Email</span> titoosakwe05@gmail.com
+        </a>
+        <a href="https://github.com/tito-osakwe" class="contact-link" target="_blank" rel="noopener">
+          <span class="label">GitHub</span> tito-osakwe
+        </a>
+        <a href="https://www.linkedin.com/in/your-linkedin-here" class="contact-link" target="_blank" rel="noopener">
+          <span class="label">LinkedIn</span> Otitodilichukwu Osakwe
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer reveal">
+    <span class="footer-quote">Built from scratch — Lagos, <span id="year">2026</span>.</span>
+    <span class="footer-time"><span class="footer-dot"></span><span id="time">Lagos</span></span>
+  </footer>
+
+</main>
+
+<script>
+  // -----------------------------------------------------------
+  // 1. Background blob follows the mouse with smooth easing
+  // -----------------------------------------------------------
+  const blob = document.getElementById('blob');
+  let mouseX = window.innerWidth / 2;
+  let mouseY = window.innerHeight / 2;
+  let blobX = mouseX;
+  let blobY = mouseY;
+
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  function animateBlob() {
+    // Ease the blob toward the cursor (linear interpolation)
+    blobX += (mouseX - blobX) * 0.08;
+    blobY += (mouseY - blobY) * 0.08;
+    blob.style.transform = `translate(${blobX - 240}px, ${blobY - 240}px)`;
+    requestAnimationFrame(animateBlob);
+  }
+  animateBlob();
+
+  // -----------------------------------------------------------
+  // 2. Click name to cycle through color themes
+  // -----------------------------------------------------------
+  const themes = ['coral', 'navy', 'teal', 'purple', 'amber'];
+  let currentTheme = 0;
+  const nameEl = document.getElementById('nameHeading');
+  const nameHint = document.getElementById('nameHint');
+  let clickCount = 0;
+
+  nameEl.addEventListener('click', () => {
+    currentTheme = (currentTheme + 1) % themes.length;
+    document.body.setAttribute('data-theme', themes[currentTheme]);
+    clickCount++;
+
+    // Hide the "click my name" hint after first interaction
+    if (clickCount === 1) {
+      nameHint.style.opacity = '0';
+      nameHint.style.transform = 'scale(0.8)';
+      setTimeout(() => { nameHint.style.display = 'none'; }, 400);
+    }
+  });
+
+  // -----------------------------------------------------------
+  // 3. Reveal sections as they enter the viewport
+  // -----------------------------------------------------------
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // -----------------------------------------------------------
+  // 4. Live Lagos time + auto-updating year
+  // -----------------------------------------------------------
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  function updateTime() {
+    const now = new Date();
+    const time = now.toLocaleTimeString('en-NG', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      timeZone: 'Africa/Lagos'
+    });
+    document.getElementById('time').textContent = `Lagos · ${time}`;
+  }
+  updateTime();
+  setInterval(updateTime, 30000);
+</script>
+
+</body>
+</html>
