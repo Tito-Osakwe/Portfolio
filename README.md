@@ -4,7 +4,7 @@ My personal portfolio site, built from scratch with HTML, CSS, and vanilla JavaS
 
 ## 🔗 Live Site
 
-[tito-osakwe.github.io/portfolio](https://tito-osakwe.github.io/portfolio/)
+[tito-osakwe.github.io/portfolio](https://tito-osakwe.github.io/Portfolio/)
 
 ## ✨ Features
 
